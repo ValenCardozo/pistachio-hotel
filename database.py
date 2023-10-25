@@ -54,6 +54,17 @@ def getAllReserves():
 
     return rows
 
+def insertDummyreservations():
+    conn = sqlite3.connect('hotel.db')
+    cursor = conn.cursor()
+
+    cursor.execute("INSERT INTO reserves (customer_full_name, customer_email, date_entry, date_out, room_id, amount) VALUES ('Cliente 1', 'cliente1@correo.com', '2023-10-23 10:00:00', '2023-10-25 12:00:00', 101, 200), ('Cliente 2', 'cliente2@correo.com', '2023-10-24 11:00:00', '2023-10-26 13:00:00', 102, 250), ('Cliente 3', 'cliente3@correo.com', '2023-10-25 12:00:00', '2023-10-27 14:00:00', 103, 300);")
+
+    conn.commit()
+    conn.close()
+
+    return True
+
 # Step 5: Insert a new employee into the 'employees' table
 # cursor.execute("INSERT INTO employees (name, position, salary) VALUES (?, ?, ?)", ('John Doe', 'Software Engineer', 80000))
 # conn.commit()
