@@ -84,24 +84,21 @@ def insertDummyreservations():
 
     return True
 
-# Step 5: Insert a new employee into the 'employees' table
-# cursor.execute("INSERT INTO employees (name, position, salary) VALUES (?, ?, ?)", ('John Doe', 'Software Engineer', 80000))
-# conn.commit()
+def searchAvailableRooms(dateEntry, dateOut):
+    conn = sqlite3.connect('hotel.db')
+    cursor = conn.cursor()
 
-# Step 6: Query data from the 'employees' table
-# cursor.execute("SELECT * FROM employees")
-# rows = cursor.fetchall()
+    query = """
+    SELECT *
+    FROM rooms
+    LEFT JOIN reserves ON rooms.id = reserves.room_id
+    WHERE reserves.id IS NULL OR (reserves.date_out < ? OR reserves.date_entry > ?);
+    """
 
-# Print the rows
-# for row in rows:
-#     print(row)
+    cursor.execute(query, (dateEntry, dateOut))
+    rows = cursor.fetchall()
 
-# Step 7: Update the salary of the employee with id 1
-# cursor.execute("UPDATE employees SET salary = ? WHERE id = ?", (90000, 1))
-# conn.commit()
+    conn.commit()
+    conn.close()
 
-# Step 8: Delete the employee with id 1
-# cursor.execute("DELETE FROM employees WHERE id = ?", (1,))
-# conn.commit()
-
-# Step 9: Close the connection when you're done
+    return rows
