@@ -1,11 +1,3 @@
-# Home window: List reservations and filters, show buttons to -> admin, my reserves, and create a reservation 
-# TO-DO:
-# [X] Create database and tables.
-# [] List reserves.
-# [] Show admin button.
-# [] Show button to create a reservation.
-# [] Show button to visit my reserves.
-
 import sys
 from PySide6.QtGui import *
 from PySide6.QtCore import *
@@ -18,26 +10,39 @@ class Home(QMainWindow):
         super().__init__()
         self.initUI()
         initDatabase()
-    
+
     def initUI(self):
-        layout = layout = QVBoxLayout()
+        self.setWindowTitle("Hotel Pistachio")
+        layout = QVBoxLayout()
         self.setWindowState(Qt.WindowMaximized)
-        # self.addToolBar(Qt.TopToolBarArea, self.initToolBar())
-        #admin 
-        adminButton = QPushButton('ADMIN')
-        layout.addWidget(adminButton)
-        adminButton.clicked.connect(self.openAdmin)
+
+        # Agregar un encabezado con botones y título
+        headerWidget = QWidget()
+        headerLayout = QHBoxLayout()
+        headerWidget.setLayout(headerLayout)
+        # Agregar botones o elementos al encabezado (puedes personalizar esto)
+        headerLayout.addWidget(QLabel("Hotel Pistachio"))
+        headerLayout.addWidget(QPushButton("Botón 1"))
+        headerLayout.addWidget(QPushButton("Botón 2"))
+        headerLayout.addStretch(2) # Espaciador para empujar "ADMIN" a la derecha
+
+        self.setAdminButton(headerLayout)
+        layout.addWidget(headerWidget)
+
         centralWidget = QWidget()
         centralWidget.setLayout(layout)
         self.setCentralWidget(centralWidget)
 
+    def setAdminButton(self, layout):
+        adminButton = QPushButton('ADMIN')
+        adminButton.setStyleSheet("background-color:DodgerBlue; color: white; border: 1px solid #007BFF; border-radius: 2px;")
+        layout.addWidget(adminButton)
+
+        adminButton.clicked.connect(self.openAdmin)
+
     def openAdmin(self):
         self.admin = Admin()
         self.admin.show()
-
-    def initToolBar(self):
-        toolBar = QToolBar()
-        return toolBar
 
 def main():
     app = QApplication(sys.argv)
