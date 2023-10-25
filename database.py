@@ -54,6 +54,25 @@ def getAllReserves():
 
     return rows
 
+def insertReservations(params):
+    conn = sqlite3.connect('hotel.db')
+    cursor = conn.cursor()
+
+    sql = "INSERT INTO reserves (customer_full_name, customer_email, date_entry, date_out, room_id, amount) VALUES (?, ?, ?, ?, ?, ?)"
+    cursor.execute(sql, (
+        params['customer_full_name'],
+        params['customer_email'],
+        params['date_entry'],
+        params['date_out'],
+        params['room_id'],
+        params['amount']
+    ))
+
+    conn.commit()
+    conn.close()
+
+    return True
+
 def insertDummyreservations():
     conn = sqlite3.connect('hotel.db')
     cursor = conn.cursor()

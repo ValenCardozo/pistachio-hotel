@@ -1,4 +1,3 @@
-import sys
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -22,27 +21,21 @@ class Reserves(QMainWindow):
             self.addButton.clicked.connect(self.addReserveModal)
             layout.addWidget(self.addButton)
 
-            table = QTableWidget()
-            table.setColumnCount(7)
-            table.setHorizontalHeaderLabels(["id","customer_full_name","customer_email","date_entry","date_out","room_id","amount"])
+            self.table = QTableWidget()
+            self.table.setColumnCount(7)
+            self.table.setHorizontalHeaderLabels(["id","customer_full_name","customer_email","date_entry","date_out","room_id","amount"])
 
-            data = getAllReserves()
-            table.setRowCount(len(data))
-
-            for row, rowData in enumerate(data):
-                for col, value in enumerate(rowData):
-                    item = QTableWidgetItem(str(value))
-                    table.setItem(row, col, item)
+            self.updateTable()
 
             self.salida = QLabel()
             self.salida.setText(f"Mis reservas")
             layout.addWidget(self.salida)
 
-            layout.addWidget(table)
+            layout.addWidget(self.table)
 
     def addReserveModal(self):
-        dialog = QDialog(self)
-        dialog.setWindowTitle("Agregar Reserva")
+        self.dialog = QDialog(self)
+        self.dialog.setWindowTitle("Agregar Reserva")
 
         formLayout = QFormLayout()
 
@@ -61,20 +54,45 @@ class Reserves(QMainWindow):
         formLayout.addRow("Monto:", self.amountLineEdit)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.accepted.connect(dialog.accept)
-        buttons.rejected.connect(dialog.reject)
+        buttons.accepted.connect(self.insertReserve)
+        buttons.rejected.connect(self.dialog.reject)
 
         formLayout.addRow(buttons)
 
-        dialog.setLayout(formLayout)
+        self.dialog.setLayout(formLayout)
 
-        result = dialog.exec_()
+        self.dialog.exec()
+
+    def insertReserve(self):
+        form_data = {
+            'customer_full_name': self.customerFullNameLineEdit.text(),
+            'customer_email': self.customerEmailLineEdit.text(),
+            'date_entry': self.dateEntryLineEdit.text(),
+            'date_out': self.dateOutLineEdit.text(),
+            'room_id': self.roomIdLineEdit.text(),
+            'amount': self.amountLineEdit.text(),
+        }
+
+        insertReservations(form_data)
+        self.updateTable()
+        self.dialog.accept()
+
+    def updateTable(self):
+        data = getAllReserves()
+
+        self.table.setRowCount(0)
+
+        self.table.setRowCount(len(data))
+        for row, rowData in enumerate(data):
+            for col, value in enumerate(rowData):
+                item = QTableWidgetItem(str(value))
+                self.table.setItem(row, col, item)
 
 def main():
-    app = QApplication(sys.argv)
+    app = QApplication()
     window = Reserves()
     window.show()
-    sys.exit(app.exec())
+    app.exec()
 
 if __name__ == '__main__':
     main()
