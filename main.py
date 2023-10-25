@@ -14,17 +14,16 @@ class Home(QMainWindow):
     def initUI(self):
         self.setWindowTitle("Hotel Pistachio")
         layout = QVBoxLayout()
-        self.setWindowState(Qt.WindowMaximized)
 
-        # Agregar un encabezado con botones y título
         headerWidget = QWidget()
         headerLayout = QHBoxLayout()
         headerWidget.setLayout(headerLayout)
-        # Agregar botones o elementos al encabezado (puedes personalizar esto)
-        headerLayout.addWidget(QLabel("Hotel Pistachio"))
-        headerLayout.addWidget(QPushButton("Botón 1"))
-        headerLayout.addWidget(QPushButton("Botón 2"))
-        headerLayout.addStretch(2) # Espaciador para empujar "ADMIN" a la derecha
+        
+        titleLabel = QLabel("Hotel Pistachio")
+        # titleLabel.setStyleSheet("font-size: 20px; color: #007BFF;")
+
+        headerLayout.addWidget(titleLabel)
+        headerLayout.addStretch(1)
 
         self.setAdminButton(headerLayout)
         layout.addWidget(headerWidget)
@@ -35,7 +34,6 @@ class Home(QMainWindow):
 
     def setAdminButton(self, layout):
         adminButton = QPushButton('ADMIN')
-        adminButton.setStyleSheet("background-color:DodgerBlue; color: white; border: 1px solid #007BFF; border-radius: 2px;")
         layout.addWidget(adminButton)
 
         adminButton.clicked.connect(self.openAdmin)
@@ -46,8 +44,6 @@ class Home(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    css = '*{font-size: 15px; background-color: #fafafa; color: #101212;}'
-    app.setStyleSheet(css)
     some_app = Home()
     some_app.show()
     sys.exit(app.exec())
