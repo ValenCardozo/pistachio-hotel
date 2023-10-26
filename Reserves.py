@@ -41,16 +41,27 @@ class Reserves(QMainWindow):
 
         self.customerFullNameLineEdit = QLineEdit()
         self.customerEmailLineEdit = QLineEdit()
-        self.dateEntryLineEdit = QLineEdit()
-        self.dateOutLineEdit = QLineEdit()
-        self.roomIdLineEdit = QLineEdit()
+
+        self.dateEntryLineEdit = QDateEdit()
+        self.dateEntryLineEdit.setCalendarPopup(True)
+        self.dateEntryLineEdit.setDate(QDate.currentDate())
+        self.dateEntryLineEdit.dateChanged.connect(self.changeRoomAmount)
+
+        self.dateOutLineEdit = QDateEdit()
+        self.dateOutLineEdit.setCalendarPopup(True)
+        self.dateOutLineEdit.setDate(QDate.currentDate())
+        self.dateOutLineEdit.dateChanged.connect(self.changeRoomAmount)
+
+        self.roomIdLineEdit = QComboBox(self)
         self.amountLineEdit = QLineEdit()
+        self.roomIdLineEdit.currentIndexChanged.connect(self.changeRoomAmount)
+        self.roomIdLineEdit.addItems(['comfort','suite','presidential'])
 
         formLayout.addRow("Nombre del Cliente:", self.customerFullNameLineEdit)
         formLayout.addRow("Email del Cliente:", self.customerEmailLineEdit)
         formLayout.addRow("Fecha de Entrada:", self.dateEntryLineEdit)
         formLayout.addRow("Fecha de Salida:", self.dateOutLineEdit)
-        formLayout.addRow("ID de la Habitación:", self.roomIdLineEdit)
+        formLayout.addRow("Habitación:", self.roomIdLineEdit)
         formLayout.addRow("Monto:", self.amountLineEdit)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -62,6 +73,17 @@ class Reserves(QMainWindow):
         self.dialog.setLayout(formLayout)
 
         self.dialog.exec()
+
+    def changeRoomAmount(self):
+        roomId = self.roomIdLineEdit.currentIndex()
+        amountsPerDay = [100,200,500]
+
+        date_entry = self.dateEntryLineEdit.date()
+        date_out = self.dateOutLineEdit.date()
+
+        difference = date_entry.daysTo(date_out)
+
+        self.amountLineEdit.setText(str(amountsPerDay[roomId] * difference))
 
     def insertReserve(self):
         form_data = {
