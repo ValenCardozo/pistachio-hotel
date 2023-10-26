@@ -2,6 +2,7 @@ from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 from database import *
+from datetime import date
 
 class Reserves(QMainWindow):
     def __init__(self):
@@ -28,14 +29,18 @@ class Reserves(QMainWindow):
             email_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
             self.email_input = QLineEdit()
             self.email_input.setFixedWidth(150)
+
             search_button = QPushButton("Buscar")
-            search_button.clicked.connect(self.updateTableForEmail)
+            search_button.clicked.connect(self.findForMail)
             search_button.setFixedWidth(80)
+            search_button.setCursor(QCursor(Qt.PointingHandCursor))
+            search_button.setStyleSheet("background-color: #def1ed; color: white; border: 1px solid #def1ed;")
+            search_button.setStyleSheet("QPushButton:hover { background-color: #c3ecb9; color: white; border-radius : 20;}")
 
             grid_layout.addWidget(email_label, 0, 0)
             grid_layout.addWidget(self.email_input, 0, 1)
             grid_layout.addWidget(search_button, 0, 2)
-            grid_layout.addItem(QSpacerItem(10, 10, QSizePolicy.Expanding, QSizePolicy.Fixed), 0, 3)  # Espacio en la derecha
+            grid_layout.addItem(QSpacerItem(10, 10, QSizePolicy.Expanding, QSizePolicy.Fixed), 0, 3)
 
             layout.addLayout(grid_layout)
 
@@ -110,7 +115,7 @@ class Reserves(QMainWindow):
 
         insertReservations(form_data)
         self.showAlert("Reserva agregada exitosamente")
-        self.updateTable()
+        self.updateTableForEmail(self.customerEmailLineEdit.text())
         self.dialog.accept()
 
     def updateTable(self):
@@ -131,23 +136,40 @@ class Reserves(QMainWindow):
 
             self.table.setCellWidget(row, 7, delete_button)
 
-    def updateTableForEmail(self):
-        data = getAllReservesForMail(self.email_input.text())
+    def findForMail(self):
+        self.updateTableForEmail(self.email_input.text())
+
+    def updateTableForEmail(self, email):
+        data = getAllReservesForMail(email)
 
         self.table.setRowCount(0)
 
         self.table.setRowCount(len(data))
         for row, rowData in enumerate(data):
-            for col, value in enumerate(rowData):
-                item = QTableWidgetItem(str(value))
-                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                self.table.setItem(row, col, item)
+            self.populateRow(row, [str(rowData['id']),
+                str(rowData['customer_full_name']),
+                str(rowData['customer_email']),
+                str(rowData['date_entry']),
+                str(rowData['date_out']),
+                str(rowData['description']),
+                str(rowData['amount']),
+            ])
 
-            delete_button = QPushButton('Borrar')
-            delete_button.clicked.connect(self.deleteRow)
-            delete_button.setStyleSheet("background-color: red; color: white;")
+            today = date.today().strftime("%Y-%m-%d")
+            if str(rowData['date_entry']) > today:
+                delete_button = QPushButton('Cancelar Reserva')
+                delete_button.clicked.connect(self.deleteRow)
+                delete_button.setCursor(QCursor(Qt.PointingHandCursor))
+                delete_button.setStyleSheet("background-color: #FF7F7F; color: white; border: 1px solid #FF7F7F;")
+                delete_button.setStyleSheet("QPushButton:hover { background-color: #FF5050; color: white; border: 1px solid #FF5050; }")
 
-            self.table.setCellWidget(row, 7, delete_button)
+                self.table.setCellWidget(row, 7, delete_button)
+
+    def populateRow(self, row, elements):
+        for index, element in enumerate(elements):
+            item = QTableWidgetItem(str(element))
+            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            self.table.setItem(row, index, item)
 
     def deleteRow(self):
         button = self.sender()
@@ -161,7 +183,7 @@ class Reserves(QMainWindow):
 
         if result:
             self.showAlert("Reserva borrada exitosamente")
-        self.updateTable()
+        self.updateTableForEmail(self.table.item(row, 2).text())
 
     def showAlert(self, message):
         alert = QMessageBox()
