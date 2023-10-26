@@ -41,7 +41,8 @@ class Reserves(QMainWindow):
 
             self.table = QTableWidget()
             self.table.setColumnCount(8)
-            self.table.setHorizontalHeaderLabels(["id","customer_full_name","customer_email","date_entry","date_out","room_id","amount", "Action"])
+            self.table.setHorizontalHeaderLabels(["id","nombre","email","fecha de ingreso","fecha de salia","habitacion","precio", "accion"])
+            self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
             layout.addWidget(self.table)
 
