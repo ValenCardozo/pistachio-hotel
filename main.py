@@ -29,7 +29,9 @@ class Home(QMainWindow):
 
         self.loadFilter()
 
-        # self.searchRooms(self.layout)
+        self.table = QTableWidget()
+        self.layout.addWidget(self.table)
+
         centralWidget = QWidget()
         centralWidget.setLayout(self.layout)
         self.setCentralWidget(centralWidget)
@@ -67,30 +69,28 @@ class Home(QMainWindow):
         filterLayout.addWidget(searchButton)
         self.layout.addWidget(filterWidget)
 
-    def loadReservesTable(self, layout, records):
-        table = QTableWidget()
-        table.setColumnCount(8)
-        table.setHorizontalHeaderLabels(["id", "customer_full_name", "customer_email", "date_entry", "date_out", "room_id", "amount", "action"])
+    def updateReservesTable(self, records):
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(["ID", "Descripcion", "Cant. Personas", "Precio por noche"])
 
-        table.setRowCount(len(records))
+        self.table.setRowCount(len(records))
 
         for i, record in enumerate(records):
             for j, value in enumerate(record):
                 item = QTableWidgetItem(str(value))
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                table.setItem(i, j, item)
+                self.table.setItem(i, j, item)
 
-        table.setMinimumSize(600, 400)
-        self.layout.addWidget(table)
+        self.table.setMinimumSize(600, 400)
 
-    def searchRooms(self, layout):
+    def searchRooms(self):
         date_start = self.dateEditStart.date()
         date_end = self.dateEditEnd.date()
         start_date = datetime(date_start.year(), date_start.month(), date_start.day(), 0, 0, 0).strftime('%Y-%m-%d %H:%M:%S')
         end_date = datetime(date_end.year(), date_end.month(), date_end.day(), 23, 59, 59).strftime('%Y-%m-%d %H:%M:%S')
         rooms = searchAvailableRooms(start_date, end_date)
-        
-        self.loadReservesTable(layout, rooms)
+
+        self.updateReservesTable(rooms)
 
 def main():
     app = QApplication(sys.argv)

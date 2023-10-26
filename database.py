@@ -84,17 +84,31 @@ def insertDummyreservations():
 
     return True
 
+def insertDummyRooms():
+    conn = sqlite3.connect('hotel.db')
+    cursor = conn.cursor()
+
+    cursor.executemany("INSERT INTO rooms (description, capacity, night_price) VALUES (?, ?, ?)", [
+        ('Habitación 101', 2, 150),
+        ('Habitación 102', 3, 200),
+        ('Habitación 103', 4, 250)
+    ])
+
+    conn.commit()
+    conn.close()
+
+    return True
+
 def searchAvailableRooms(dateEntry, dateOut):
     conn = sqlite3.connect('hotel.db')
     cursor = conn.cursor()
 
     query = """
-    SELECT *
+    SELECT rooms.id, rooms.description, rooms.capacity, rooms.night_price
     FROM rooms
-    JOIN reserves ON rooms.id = reserves.room_id
-    WHERE reserves.date_out NOT BETWEEN ? AND ?;
+    LEFT JOIN reserves ON rooms.id = reserves.room_id
+    WHERE reserves.id IS NULL OR (reserves.date_out < ? OR reserves.date_entry > ?);
     """
-
     cursor.execute(query, (dateEntry, dateOut))
     rows = cursor.fetchall()
 
