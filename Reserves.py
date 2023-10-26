@@ -22,8 +22,8 @@ class Reserves(QMainWindow):
             layout.addWidget(self.addButton)
 
             self.table = QTableWidget()
-            self.table.setColumnCount(7)
-            self.table.setHorizontalHeaderLabels(["id","customer_full_name","customer_email","date_entry","date_out","room_id","amount"])
+            self.table.setColumnCount(8)
+            self.table.setHorizontalHeaderLabels(["id","customer_full_name","customer_email","date_entry","date_out","room_id","amount", "Action"])
 
             self.updateTable()
 
@@ -55,7 +55,7 @@ class Reserves(QMainWindow):
         self.roomIdLineEdit = QComboBox(self)
         self.amountLineEdit = QLineEdit()
         self.roomIdLineEdit.currentIndexChanged.connect(self.changeRoomAmount)
-        self.roomIdLineEdit.addItems(['comfort','suite','presidential'])
+        self.roomIdLineEdit.addItems(['comfort','suite','presidential']) #Editar
 
         formLayout.addRow("Nombre del Cliente:", self.customerFullNameLineEdit)
         formLayout.addRow("Email del Cliente:", self.customerEmailLineEdit)
@@ -96,6 +96,7 @@ class Reserves(QMainWindow):
         }
 
         insertReservations(form_data)
+        self.showAlert("Reserva agregada exitosamente")
         self.updateTable()
         self.dialog.accept()
 
@@ -108,7 +109,35 @@ class Reserves(QMainWindow):
         for row, rowData in enumerate(data):
             for col, value in enumerate(rowData):
                 item = QTableWidgetItem(str(value))
+                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                 self.table.setItem(row, col, item)
+
+            delete_button = QPushButton('Borrar')
+            delete_button.clicked.connect(self.deleteRow)
+            delete_button.setStyleSheet("background-color: red; color: white;")
+
+            self.table.setCellWidget(row, 7, delete_button)
+
+    def deleteRow(self):
+        button = self.sender()
+        if button:
+            index = self.table.indexAt(button.pos())
+            row = index.row()
+            item = self.table.item(row, 0)
+            id_value = item.text()
+
+        result = removeReservation(id_value)
+
+        if result:
+            self.showAlert("Reserva borrada exitosamente")
+        self.updateTable()
+
+    def showAlert(self, message):
+        alert = QMessageBox()
+        alert.setText(message)
+        alert.setIcon(QMessageBox.Information)
+        alert.setStandardButtons(QMessageBox.Ok)
+        alert.exec()
 
 def main():
     app = QApplication()

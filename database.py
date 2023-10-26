@@ -54,6 +54,18 @@ def getAllReserves():
 
     return rows
 
+def removeReservation(reservationId):
+    conn = sqlite3.connect('hotel.db')
+    cursor = conn.cursor()
+
+    delete_query = f"DELETE FROM reserves WHERE id = {reservationId}"
+    cursor.execute(delete_query)
+
+    conn.commit()
+    conn.close()
+
+    return True
+
 def insertReservations(params):
     conn = sqlite3.connect('hotel.db')
     cursor = conn.cursor()
