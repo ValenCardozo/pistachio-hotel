@@ -9,13 +9,12 @@ from admin import Admin
 class Home(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.initUI()
         initDatabase()
-        insertDummyreservations()
+        self.initUI()
 
     def initUI(self):
         self.setWindowTitle("Hotel Pistachio")
-        layout = QVBoxLayout()
+        self.layout = QVBoxLayout()
 
         headerWidget = QWidget()
         headerLayout = QHBoxLayout()
@@ -26,13 +25,13 @@ class Home(QMainWindow):
         headerLayout.addStretch(1)
 
         self.setAdminButton(headerLayout)
-        layout.addWidget(headerWidget)
+        self.layout.addWidget(headerWidget)
 
-        self.loadFilter(layout)
+        self.loadFilter()
 
-        self.searchRooms(layout)
+        # self.searchRooms(self.layout)
         centralWidget = QWidget()
-        centralWidget.setLayout(layout)
+        centralWidget.setLayout(self.layout)
         self.setCentralWidget(centralWidget)
 
         self.setMinimumSize(800, 600)
@@ -47,15 +46,17 @@ class Home(QMainWindow):
         self.admin = Admin()
         self.admin.show()
 
-    def loadFilter(self, layout):
+    def loadFilter(self):
         filterWidget = QWidget()
         filterLayout = QHBoxLayout()
         filterWidget.setLayout(filterLayout)
 
         labelStart = QLabel("Fecha de inicio:")
         self.dateEditStart = QDateEdit()
+        self.dateEditStart.setCalendarPopup(True)
         labelEnd = QLabel("Fecha de fin:")
         self.dateEditEnd = QDateEdit()
+        self.dateEditEnd.setCalendarPopup(True)
         searchButton = QPushButton("Buscar")
         searchButton.clicked.connect(self.searchRooms)
 
@@ -64,7 +65,7 @@ class Home(QMainWindow):
         filterLayout.addWidget(labelEnd)
         filterLayout.addWidget(self.dateEditEnd)
         filterLayout.addWidget(searchButton)
-        layout.addWidget(filterWidget)
+        self.layout.addWidget(filterWidget)
 
     def loadReservesTable(self, layout, records):
         table = QTableWidget()
@@ -80,15 +81,15 @@ class Home(QMainWindow):
                 table.setItem(i, j, item)
 
         table.setMinimumSize(600, 400)
-        layout.addWidget(table)
+        self.layout.addWidget(table)
 
     def searchRooms(self, layout):
         date_start = self.dateEditStart.date()
         date_end = self.dateEditEnd.date()
-        start_date = datetime(date_start.year(), date_start.month(), date_start.day()).date()
-        end_date = datetime(date_end.year(), date_end.month(), date_end.day()).date()        
+        start_date = datetime(date_start.year(), date_start.month(), date_start.day(), 0, 0, 0).strftime('%Y-%m-%d %H:%M:%S')
+        end_date = datetime(date_end.year(), date_end.month(), date_end.day(), 23, 59, 59).strftime('%Y-%m-%d %H:%M:%S')
         rooms = searchAvailableRooms(start_date, end_date)
-
+        
         self.loadReservesTable(layout, rooms)
 
 def main():

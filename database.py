@@ -91,8 +91,8 @@ def searchAvailableRooms(dateEntry, dateOut):
     query = """
     SELECT *
     FROM rooms
-    LEFT JOIN reserves ON rooms.id = reserves.room_id
-    WHERE reserves.id IS NULL OR (reserves.date_out < ? OR reserves.date_entry > ?);
+    JOIN reserves ON rooms.id = reserves.room_id
+    WHERE reserves.date_out NOT BETWEEN ? AND ?;
     """
 
     cursor.execute(query, (dateEntry, dateOut))
