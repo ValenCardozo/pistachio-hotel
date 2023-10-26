@@ -8,8 +8,8 @@ class Reserves(QMainWindow):
             super().__init__()
             self.setWindowState(Qt.WindowMaximized)
 
-            self.setWindowTitle("Tabla de Información")
-            self.setGeometry(100, 100, 600, 400)
+            self.setWindowTitle("Hotel Pistacho - Mis Reservas")
+            self.setGeometry(100, 100, 800, 600)
 
             central_widget = QWidget()
             self.setCentralWidget(central_widget)
@@ -17,19 +17,31 @@ class Reserves(QMainWindow):
             layout = QVBoxLayout()
             central_widget.setLayout(layout)
 
-            self.addButton = QPushButton("Agregar Reserva")
-            self.addButton.clicked.connect(self.addReserveModal)
-            layout.addWidget(self.addButton)
+            # Encabezado personalizado en la esquina superior izquierda
+            header_label = QLabel("Hotel Pistacho - Mis Reservas")
+            header_label.setStyleSheet("background-color: lightgreen; font-size: 16px; padding: 10px; padding: 10px;")
+            layout.addWidget(header_label, alignment=Qt.AlignTop | Qt.AlignLeft)
+
+            grid_layout = QGridLayout()
+
+            email_label = QLabel("Correo Electrónico:")
+            email_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self.email_input = QLineEdit()
+            self.email_input.setFixedWidth(150)
+            search_button = QPushButton("Buscar")
+            search_button.clicked.connect(self.updateTableForEmail)
+            search_button.setFixedWidth(80)
+
+            grid_layout.addWidget(email_label, 0, 0)
+            grid_layout.addWidget(self.email_input, 0, 1)
+            grid_layout.addWidget(search_button, 0, 2)
+            grid_layout.addItem(QSpacerItem(10, 10, QSizePolicy.Expanding, QSizePolicy.Fixed), 0, 3)  # Espacio en la derecha
+
+            layout.addLayout(grid_layout)
 
             self.table = QTableWidget()
             self.table.setColumnCount(8)
             self.table.setHorizontalHeaderLabels(["id","customer_full_name","customer_email","date_entry","date_out","room_id","amount", "Action"])
-
-            self.updateTable()
-
-            self.salida = QLabel()
-            self.salida.setText(f"Mis reservas")
-            layout.addWidget(self.salida)
 
             layout.addWidget(self.table)
 
@@ -102,6 +114,24 @@ class Reserves(QMainWindow):
 
     def updateTable(self):
         data = getAllReserves()
+
+        self.table.setRowCount(0)
+
+        self.table.setRowCount(len(data))
+        for row, rowData in enumerate(data):
+            for col, value in enumerate(rowData):
+                item = QTableWidgetItem(str(value))
+                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                self.table.setItem(row, col, item)
+
+            delete_button = QPushButton('Borrar')
+            delete_button.clicked.connect(self.deleteRow)
+            delete_button.setStyleSheet("background-color: red; color: white;")
+
+            self.table.setCellWidget(row, 7, delete_button)
+
+    def updateTableForEmail(self):
+        data = getAllReservesForMail(self.email_input.text())
 
         self.table.setRowCount(0)
 

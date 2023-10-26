@@ -54,6 +54,18 @@ def getAllReserves():
 
     return rows
 
+def getAllReservesForMail(email):
+    conn = sqlite3.connect('hotel.db')
+    cursor = conn.cursor()
+
+    cursor.execute(f"SELECT * FROM reserves WHERE customer_email = '{email}'")
+    rows = cursor.fetchall()
+
+    conn.commit()
+    conn.close()
+
+    return rows
+
 def removeReservation(reservationId):
     conn = sqlite3.connect('hotel.db')
     cursor = conn.cursor()
