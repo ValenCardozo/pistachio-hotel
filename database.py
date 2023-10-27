@@ -33,10 +33,10 @@ def initDatabase():
 def getAllRooms():
     conn = sqlite3.connect('hotel.db')
     cursor = conn.cursor()
-    
+
     cursor.execute("SELECT * FROM rooms")
     rows = cursor.fetchall()
-    
+
     conn.commit()
     conn.close()
 
@@ -54,10 +54,31 @@ def getAllReserves():
 
     return rows
 
+def insertRoom(description, capacity, night_price):
+    conn = sqlite3.connect('hotel.db')
+    cursor = conn.cursor()
+
+    # Inserta un nuevo registro en la tabla 'rooms'
+    cursor.execute("INSERT INTO rooms (description, capacity, night_price) VALUES (?, ?, ?)", (description, capacity, night_price))
+    conn.commit()
+    conn.close()
+
+def deleteRoom(description, capacity, night_price):
+    conn = sqlite3.connect('hotel.db')
+    cursor = conn.cursor()
+
+    # Elimina el registro de la tabla 'rooms' basado en description, capacity, y night_price
+    cursor.execute("DELETE FROM rooms WHERE description=? AND capacity=? AND night_price=?", (description, capacity, night_price))
+
+    conn.commit()
+    conn.close()
+
+# Step 5: Insert a new employee into the 'employees' table
+# cursor.execute("INSERT INTO employees (name, position, salary) VALUES (?, ?, ?)", ('John Doe', 'Software Engineer', 80000))
+# conn.commit()
 def getAllReservesForMail(email):
     conn = sqlite3.connect('hotel.db')
     conn.row_factory = sqlite3.Row
-
     cursor = conn.cursor()
 
     query = f"""
