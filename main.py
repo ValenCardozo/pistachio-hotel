@@ -5,6 +5,7 @@ from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 from database import *
 from admin import Admin
+from Reserves import Reserves
 
 class Home(QMainWindow):
     def __init__(self):
@@ -24,7 +25,13 @@ class Home(QMainWindow):
         headerLayout.addWidget(titleLabel)
         headerLayout.addStretch(1)
 
+        self.setReservesButton(headerLayout)
+        self.layout.addWidget(headerWidget)
+
         self.setAdminButton(headerLayout)
+        self.layout.addWidget(headerWidget)
+
+        self.setCreateReserveButton(headerLayout)
         self.layout.addWidget(headerWidget)
 
         self.loadFilter()
@@ -47,6 +54,26 @@ class Home(QMainWindow):
     def openAdmin(self):
         self.admin = Admin()
         self.admin.show()
+
+    def setReservesButton(self, layout):
+        adminButton = QPushButton('Reserves')
+        layout.addWidget(adminButton)
+
+        adminButton.clicked.connect(self.openReserves)
+
+    def openReserves(self):
+        self.reserves = Reserves()
+        self.reserves.show()
+
+    def setCreateReserveButton(self, layout):
+        createReserve = QPushButton('Reservar')
+        layout.addWidget(createReserve)
+
+        createReserve.clicked.connect(self.createReserve)
+
+    def createReserve(self):
+        self.addModal = Reserves()
+        self.addModal.addReserveModal()
 
     def loadFilter(self):
         filterWidget = QWidget()
