@@ -2,7 +2,6 @@ import sys
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
-from addRoom import AddRoom
 from database import getAllRooms, deleteRoom, insertRoom
 
 class Admin(QMainWindow):
