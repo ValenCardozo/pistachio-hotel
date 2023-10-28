@@ -10,6 +10,7 @@ class Admin(QMainWindow):
         self.setWindowState(Qt.WindowMaximized)
         self.initUI()
         self.adjust_input_group_width()
+        self.setStyleSheet("background-color: #ffffff; color: #000000;")
 
     def initUI(self):
         central_widget = QWidget(self)
@@ -23,7 +24,7 @@ class Admin(QMainWindow):
         header_frame.setFrameShape(QFrame.StyledPanel)
         header_frame.setFrameShadow(QFrame.Raised)
         header_frame.setMaximumHeight(70)
-        header_frame.setStyleSheet("background-color: #99dee6;")
+        header_frame.setStyleSheet("background-color: #99dee6; border: 1px solid black;")
         header_layout = QHBoxLayout(header_frame)
 
         title_label = QLabel("Hotel Pistacho Administración", self)
@@ -39,26 +40,31 @@ class Admin(QMainWindow):
         main_layout.addWidget(header_frame)
 
         self.input_group = QGroupBox("Detalles de la habitación")
+        self.input_group.setStyleSheet("border: 1px solid #d3d3d3; margin-top: 0.5em;")
 
-        self.input_group.setFixedHeight(500)
+        self.input_group.setFixedHeight(400)
         input_layout = QVBoxLayout(self.input_group)
 
-        cant_personas_label = QLabel("Cant. personas", self)
-        cant_personas_label.setFixedHeight(15)
+        cant_personas_label = QLabel("Cantidad de personas:", self)
+        cant_personas_label.setFixedHeight(30)
+        cant_personas_label.setStyleSheet("background-color: #eeeeee; color: #000000;")
         self.cant_personas_input = QLineEdit(self)
-        self.cant_personas_input.setFixedHeight(18)
+        self.cant_personas_input.setFixedHeight(25)
 
-        description_label = QLabel("Descripción", self)
-        description_label.setFixedHeight(15)
+        description_label = QLabel("Descripción:", self)
+        description_label.setFixedHeight(30)
+        description_label.setStyleSheet("background-color: #eeeeee; color: #000000;")
         self.description_input = QLineEdit(self)
-        self.description_input.setFixedHeight(18)
+        self.description_input.setFixedHeight(25)
 
-        price_label = QLabel("Costo p/noche", self)
-        price_label.setFixedHeight(15)
+        price_label = QLabel("Costo p/noche:", self)
+        price_label.setFixedHeight(30)
+        price_label.setStyleSheet("background-color: #eeeeee; color: #000000;")
         self.price_input = QLineEdit(self)
-        self.price_input.setFixedHeight(18)
+        self.price_input.setFixedHeight(25)
 
         create_button = QPushButton("Crear", self)
+        create_button.setFixedWidth(200)
         create_button.setStyleSheet("background-color: #c3d9af;")
 
         input_layout.addWidget(cant_personas_label)
@@ -114,11 +120,17 @@ class Admin(QMainWindow):
                 room_frame_layout = QVBoxLayout(room_frame)
                 room_frame.setMaximumHeight(50)
                 room_frame.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+                room_frame.setStyleSheet("border: 1px solid black;")
 
                 item_layout = QHBoxLayout()
                 item_label = QLabel(f"{description} - {cantPersons} personas - ${price}")
                 update_button = QPushButton("Actualizar")
+                update_button.setFixedWidth(75)
+                update_button.setStyleSheet("background-color: #99dee6; color: #ffffff;")
+
                 delete_button = QPushButton("Borrar")
+                delete_button.setFixedWidth(75)
+                delete_button.setStyleSheet("background-color: #ff0125; color: #ffffff;")
 
                 delete_button.clicked.connect(lambda
                     desc=description,
@@ -135,7 +147,7 @@ class Admin(QMainWindow):
                 self.rooms_layout.addWidget(room_frame)
 
     def adjust_input_group_width(self):
-        self.input_group.setFixedWidth(self.width() / 2)
+        self.input_group.setFixedWidth(self.width() * 0.45)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -146,36 +158,17 @@ class Admin(QMainWindow):
         capacity = int(self.cant_personas_input.text())
         price = int(self.price_input.text())
         insertRoom(description, capacity, price)
-
         self.populate_rooms()
 
 
     def delete_room(self, description, cantPersons, price):
         deleteRoom(description, cantPersons, price)
-
         self.populate_rooms()
 
 def main():
     app = QApplication(sys.argv)
 
     css = '''
-    * {
-        font-size: 15px;
-        background-color: #ffffff;
-        color: #101212;
-    }
-    QFrame {
-        border: 1px solid black;  # Establece el borde del recuadro a negro
-    }
-    QGroupBox {
-        border: 1px solid black;  # Establece el borde del recuadro a negro
-        margin-top: 0.5em;
-    }
-    QGroupBox::title {
-        subcontrol-origin: margin;
-        left: 10px;
-        padding: 0 3px 0 3px;
-    }
     '''
 
     app.setStyleSheet(css)
