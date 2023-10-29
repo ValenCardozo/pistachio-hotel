@@ -6,6 +6,7 @@ from PySide6.QtWidgets import *
 from database import *
 from admin import Admin
 from Reserves import Reserves
+from CustomWidgets import * 
 
 class Home(QMainWindow):
     def __init__(self):
@@ -17,7 +18,7 @@ class Home(QMainWindow):
         self.setWindowTitle("Hotel Pistachio")
         self.layout = QVBoxLayout()
 
-        headerWidget = QWidget()
+        headerWidget = StyledWidget()
         headerLayout = QHBoxLayout()
         headerWidget.setLayout(headerLayout)
         
@@ -29,9 +30,6 @@ class Home(QMainWindow):
         self.layout.addWidget(headerWidget)
 
         self.setAdminButton(headerLayout)
-        self.layout.addWidget(headerWidget)
-
-        self.setCreateReserveButton(headerLayout)
         self.layout.addWidget(headerWidget)
 
         self.loadFilter()
@@ -56,7 +54,7 @@ class Home(QMainWindow):
         self.admin.show()
 
     def setReservesButton(self, layout):
-        adminButton = QPushButton('Reserves')
+        adminButton = QPushButton('Mis Reservas')
         layout.addWidget(adminButton)
 
         adminButton.clicked.connect(self.openReserves)
@@ -65,11 +63,11 @@ class Home(QMainWindow):
         self.reserves = Reserves()
         self.reserves.show()
 
-    def setCreateReserveButton(self, layout):
+    def setCreateReserveButton(self):
         createReserve = QPushButton('Reservar')
-        layout.addWidget(createReserve)
-
         createReserve.clicked.connect(self.createReserve)
+        
+        return createReserve
 
     def createReserve(self):
         self.addModal = Reserves()
@@ -83,9 +81,13 @@ class Home(QMainWindow):
         labelStart = QLabel("Fecha de inicio:")
         self.dateEditStart = QDateEdit()
         self.dateEditStart.setCalendarPopup(True)
+        self.dateEditStart.setDate(QDate.currentDate())
+
         labelEnd = QLabel("Fecha de fin:")
         self.dateEditEnd = QDateEdit()
         self.dateEditEnd.setCalendarPopup(True)
+        self.dateEditEnd.setDate(QDate.currentDate().addMonths(1))
+
         searchButton = QPushButton("Buscar")
         searchButton.clicked.connect(self.searchRooms)
 
@@ -97,9 +99,8 @@ class Home(QMainWindow):
         self.layout.addWidget(filterWidget)
 
     def updateReservesTable(self, records):
-        self.table.setColumnCount(4)
-        self.table.setHorizontalHeaderLabels(["ID", "Descripcion", "Cant. Personas", "Precio por noche"])
-
+        self.table.setColumnCount(5)
+        self.table.setHorizontalHeaderLabels(["ID", "Descripción", "Cant. Personas", "Precio por noche", "Acción"])
         self.table.setRowCount(len(records))
 
         for i, record in enumerate(records):
@@ -107,8 +108,12 @@ class Home(QMainWindow):
                 item = QTableWidgetItem(str(value))
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                 self.table.setItem(i, j, item)
+            
+            button = self.setCreateReserveButton()
+            self.table.setCellWidget(i, 4, button)
 
         self.table.setMinimumSize(600, 400)
+
 
     def searchRooms(self):
         date_start = self.dateEditStart.date()
