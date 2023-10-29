@@ -49,8 +49,16 @@ class Home(QMainWindow):
         adminButton.clicked.connect(self.openAdmin)
 
     def openAdmin(self):
-        self.admin = Admin()
-        self.admin.show()
+        password, ok = QInputDialog.getText(self, 'Autorización', 'Ingresa la contraseña de administrador:')
+
+        hardcoded_password = "pistakio"
+
+        if ok:
+            if password == hardcoded_password:
+                self.admin = Admin()
+                self.admin.show()
+            else:
+                QMessageBox.critical(self, 'Error', 'Contraseña incorrecta.')
 
     def setReservesButton(self, layout):
         adminButton = QPushButton('Mis Reservas')

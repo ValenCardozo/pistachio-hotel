@@ -2,7 +2,8 @@ import sys
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
-from database import getAllRooms, deleteRoom, insertRoom
+from database import getAllRooms, deleteRoom, insertRoom, updateRoomById
+from UpdateRoom import *
 
 class Admin(QMainWindow):
     def __init__(self):
@@ -23,8 +24,8 @@ class Admin(QMainWindow):
         header_frame = QFrame()
         header_frame.setFrameShape(QFrame.StyledPanel)
         header_frame.setFrameShadow(QFrame.Raised)
-        header_frame.setMaximumHeight(70)
-        header_frame.setStyleSheet("background-color: #99dee6; border: 1px solid black;")
+        header_frame.setMaximumHeight(80)
+        header_frame.setStyleSheet("background-color: #8db600; color: white; font-weight: bold; border: 1px solid black;")
         header_layout = QHBoxLayout(header_frame)
 
         title_label = QLabel("Hotel Pistacho Administración", self)
@@ -112,7 +113,7 @@ class Admin(QMainWindow):
         rooms = getAllRooms()
         if rooms != []:
             for room in rooms:
-                description, cantPersons, price = room[1], room[2], room[3]
+                id, description, cantPersons, price = room[0], room[1], room[2], room[3]
 
                 room_frame = QFrame(self)
                 room_frame.setFrameShape(QFrame.StyledPanel)
@@ -123,10 +124,16 @@ class Admin(QMainWindow):
                 room_frame.setStyleSheet("border: 1px solid black;")
 
                 item_layout = QHBoxLayout()
-                item_label = QLabel(f"{description} - {cantPersons} personas - ${price}")
-                update_button = QPushButton("Actualizar")
-                update_button.setFixedWidth(75)
-                update_button.setStyleSheet("background-color: #99dee6; color: #ffffff;")
+                item_label = QLabel(f" {description} - {cantPersons} personas - ${price}")
+                self.update_button = QPushButton("Actualizar")
+                self.update_button.setFixedWidth(75)
+                self.update_button.setStyleSheet("background-color: #99dee6; color: #ffffff;")
+                self.update_button.clicked.connect(lambda
+                    room_id=id,
+                    desc=description,
+                    persons=cantPersons,
+                    price=price: self.show_update_dialog(room_id, desc, persons, price)
+                )
 
                 delete_button = QPushButton("Borrar")
                 delete_button.setFixedWidth(75)
@@ -139,7 +146,7 @@ class Admin(QMainWindow):
                 )
 
                 item_layout.addWidget(item_label)
-                item_layout.addWidget(update_button)
+                item_layout.addWidget(self.update_button)
                 item_layout.addWidget(delete_button)
 
                 room_frame_layout.addLayout(item_layout)
@@ -165,13 +172,21 @@ class Admin(QMainWindow):
         deleteRoom(description, cantPersons, price)
         self.populate_rooms()
 
+    def show_update_dialog(self, room_id, description, capacity, price):
+        dialog = UpdateRoomDialog(room_id, description, capacity, price, self)
+
+        if dialog.exec_():
+            updated_description = dialog.get_description()
+            updated_capacity = dialog.get_capacity()
+            updated_price = dialog.get_price()
+            self.update_room(room_id, updated_description, updated_capacity, updated_price)
+
+    def update_room(self, room_id, description, capacity, price):
+        updateRoomById(room_id, description, capacity, price)
+        self.populate_rooms()
+
 def main():
     app = QApplication(sys.argv)
-
-    css = '''
-    '''
-
-    app.setStyleSheet(css)
     some_app = Admin()
     some_app.show()
     sys.exit(app.exec())

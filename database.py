@@ -174,3 +174,12 @@ def searchAvailableRooms(dateEntry, dateOut):
     conn.close()
 
     return rows
+
+def updateRoomById(room_id, description, capacity, price):
+    conn = sqlite3.connect('hotel.db')
+    cursor = conn.cursor()
+
+    cursor.execute("UPDATE rooms SET description=?, capacity=?, night_price=? WHERE id=?", (description, capacity, price, room_id))
+
+    conn.commit()
+    conn.close()
