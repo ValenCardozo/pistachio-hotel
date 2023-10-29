@@ -22,7 +22,7 @@ class Home(QMainWindow):
         headerLayout = QHBoxLayout()
         headerWidget.setLayout(headerLayout)
         
-        titleLabel = QLabel("Hotel Pistachio")
+        titleLabel = StyledLabel("Hotel Pistachio")
         headerLayout.addWidget(titleLabel)
         headerLayout.addStretch(1)
 
@@ -30,7 +30,6 @@ class Home(QMainWindow):
         self.layout.addWidget(headerWidget)
 
         self.setAdminButton(headerLayout)
-        self.layout.addWidget(headerWidget)
 
         self.loadFilter()
 
@@ -64,7 +63,7 @@ class Home(QMainWindow):
         self.reserves.show()
 
     def setCreateReserveButton(self):
-        createReserve = QPushButton('Reservar')
+        createReserve = StyledButton('Reservar')
         createReserve.clicked.connect(self.createReserve)
         
         return createReserve
@@ -113,7 +112,6 @@ class Home(QMainWindow):
             self.table.setCellWidget(i, 4, button)
 
         self.table.setMinimumSize(600, 400)
-
 
     def searchRooms(self):
         date_start = self.dateEditStart.date()
