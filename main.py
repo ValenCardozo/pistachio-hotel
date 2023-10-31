@@ -33,8 +33,10 @@ class Home(QMainWindow):
 
         self.loadFilter()
 
-        self.table = QTableWidget()
+        self.table = QTableWidget() #Load reserves table
         self.layout.addWidget(self.table)
+
+        self.searchRooms() #Default Search
 
         centralWidget = QWidget()
         centralWidget.setLayout(self.layout)

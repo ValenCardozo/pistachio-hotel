@@ -6,10 +6,6 @@ class StyledButton(QPushButton):
     def __init__(self, text, parent=None):
         super(StyledButton, self).__init__(text, parent)
         self.setStyleSheet("background-color: #8db600; color: white; font-weight: bold;")
-        self.clicked.connect(self.buttonClicked)
-
-    def buttonClicked(self):
-        print("Botón clicado")
 
 class StyledWidget(QWidget):
     def __init__(self):
