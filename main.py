@@ -1,140 +1,91 @@
 import sys
-from datetime import datetime
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
-from database import *
-from admin import Admin
-from Reserves import Reserves
-from CustomWidgets import * 
+from UpdateRoom import *
+from PySide6.QtGui import QPixmap
+from home import *
+from CustomWidgets import *
 
-class Home(QMainWindow):
+class Welcome(QMainWindow):
     def __init__(self):
         super().__init__()
-        initDatabase()
+        self.setStyleSheet("background-color: #fafafa; color: #000000;")
+        self.setMinimumSize(800, 600)
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle("Hotel Pistachio")
-        self.layout = QVBoxLayout()
+        title_label = QLabel("Hotel Pistachio", self)
+        title_font = QFont()
+        title_font.setItalic(True)
+        title_font.setPointSize(50)
+        title_label.setFont(title_font)
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setGeometry(200, 10, 400, 40)
 
-        headerWidget = StyledWidget()
-        headerLayout = QHBoxLayout()
-        headerWidget.setLayout(headerLayout)
-        
-        titleLabel = StyledLabel("Hotel Pistachio")
-        headerLayout.addWidget(titleLabel)
-        headerLayout.addStretch(1)
+        self.setWindowTitle("Información del Hotel")
+        self.setGeometry(100, 100, 800, 200)
 
-        self.setReservesButton(headerLayout)
-        self.layout.addWidget(headerWidget)
+        self.text_edit = QTextEdit(self)
+        self.text_edit.setGeometry(100, 70, 600, 200)
+        self.text_edit.setReadOnly(True)
+        self.text_edit.setPlaceholderText("Información del hotel")
+        self.text_edit.setStyleSheet("border: none;")
 
-        self.setAdminButton(headerLayout)
+        with open('source/archivo.txt', 'r') as file:
+            texto = file.read()
+            self.text_edit.setPlainText(texto)
 
-        self.loadFilter()
+        self.image_label = QLabel(self)
+        self.image_label.setGeometry(200, 210, 400, 300)
+        self.image_label.setAlignment(Qt.AlignCenter)
 
-        self.table = QTableWidget() #Load reserves table
-        self.layout.addWidget(self.table)
+        self.image_paths = ["source/image1.jpeg", "source/image2.jpeg", "source/image3.jpeg", "source/image4.jpeg"]
+        self.current_image = 0
+        self.load_image()
 
-        self.searchRooms() #Default Search
+        self.prev_button = QPushButton(self)
+        self.prev_button.setStyleSheet("background-color: #8db600; color: white; font-weight: bold;")
+        self.prev_button.setGeometry(250, 520, 40, 30)
+        self.prev_button.setIcon(QIcon('arrow-left.svg'))
+        self.prev_button.clicked.connect(self.show_previous_image)
 
-        centralWidget = QWidget()
-        centralWidget.setLayout(self.layout)
-        self.setCentralWidget(centralWidget)
+        self.next_button = QPushButton(self)
+        self.next_button.setStyleSheet("background-color: #8db600; color: white; font-weight: bold;")
+        self.next_button.setGeometry(510, 520, 40, 30)
+        self.next_button.setIcon(QIcon('arrow-rigth.svg'))
+        self.next_button.clicked.connect(self.show_next_image)
 
-        self.setMinimumSize(800, 600)
-        
-    def setAdminButton(self, layout):
-        adminButton = QPushButton('ADMIN')
-        layout.addWidget(adminButton)
+        self.mainButton = StyledButton("Hacer una reserva!", self)
+        self.mainButton.clicked.connect(self.openMain)
+        self.mainButton.setGeometry(325, 550, 150, 30)
 
-        adminButton.clicked.connect(self.openAdmin)
+    def load_image(self):
+        if 0 <= self.current_image < len(self.image_paths):
+            pixmap = QPixmap(self.image_paths[self.current_image])
+            self.image_label.setPixmap(pixmap)
+            self.image_label.setStyleSheet("border: 2px solid #8db600; border-radius: 10px;")
 
-    def openAdmin(self):
-        password, ok = QInputDialog.getText(self, 'Autorización', 'Ingresa la contraseña de administrador:')
+    def show_previous_image(self):
+        self.current_image -= 1
+        if self.current_image < 0:
+            self.current_image = len(self.image_paths) - 1
+        self.load_image()
 
-        hardcoded_password = "pistakio"
+    def show_next_image(self):
+        self.current_image += 1
+        if self.current_image >= len(self.image_paths):
+            self.current_image = 0
+        self.load_image()
 
-        if ok:
-            if password == hardcoded_password:
-                self.admin = Admin()
-                self.admin.show()
-            else:
-                QMessageBox.critical(self, 'Error', 'Contraseña incorrecta.')
-
-    def setReservesButton(self, layout):
-        adminButton = QPushButton('Mis Reservas')
-        layout.addWidget(adminButton)
-
-        adminButton.clicked.connect(self.openReserves)
-
-    def openReserves(self):
-        self.reserves = Reserves()
-        self.reserves.show()
-
-    def setCreateReserveButton(self):
-        createReserve = StyledButton('Reservar')
-        createReserve.clicked.connect(self.createReserve)
-        
-        return createReserve
-
-    def createReserve(self):
-        self.addModal = Reserves()
-        self.addModal.addReserveModal()
-
-    def loadFilter(self):
-        filterWidget = QWidget()
-        filterLayout = QHBoxLayout()
-        filterWidget.setLayout(filterLayout)
-
-        labelStart = QLabel("Fecha de inicio:")
-        self.dateEditStart = QDateEdit()
-        self.dateEditStart.setCalendarPopup(True)
-        self.dateEditStart.setDate(QDate.currentDate())
-
-        labelEnd = QLabel("Fecha de fin:")
-        self.dateEditEnd = QDateEdit()
-        self.dateEditEnd.setCalendarPopup(True)
-        self.dateEditEnd.setDate(QDate.currentDate().addMonths(1))
-
-        searchButton = QPushButton("Buscar")
-        searchButton.clicked.connect(self.searchRooms)
-
-        filterLayout.addWidget(labelStart)
-        filterLayout.addWidget(self.dateEditStart)
-        filterLayout.addWidget(labelEnd)
-        filterLayout.addWidget(self.dateEditEnd)
-        filterLayout.addWidget(searchButton)
-        self.layout.addWidget(filterWidget)
-
-    def updateReservesTable(self, records):
-        self.table.setColumnCount(5)
-        self.table.setHorizontalHeaderLabels(["ID", "Descripción", "Cant. Personas", "Precio por noche", "Acción"])
-        self.table.setRowCount(len(records))
-
-        for i, record in enumerate(records):
-            for j, value in enumerate(record):
-                item = QTableWidgetItem(str(value))
-                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                self.table.setItem(i, j, item)
-            
-            button = self.setCreateReserveButton()
-            self.table.setCellWidget(i, 4, button)
-
-        self.table.setMinimumSize(600, 400)
-
-    def searchRooms(self):
-        date_start = self.dateEditStart.date()
-        date_end = self.dateEditEnd.date()
-        start_date = datetime(date_start.year(), date_start.month(), date_start.day(), 0, 0, 0).strftime('%Y-%m-%d %H:%M:%S')
-        end_date = datetime(date_end.year(), date_end.month(), date_end.day(), 23, 59, 59).strftime('%Y-%m-%d %H:%M:%S')
-        rooms = searchAvailableRooms(start_date, end_date)
-
-        self.updateReservesTable(rooms)
+    def openMain(self):
+        self.main = Home()
+        self.main.show()
+        self.close()
 
 def main():
     app = QApplication(sys.argv)
-    some_app = Home()
+    some_app = Welcome()
     some_app.show()
     sys.exit(app.exec())
 
