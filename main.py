@@ -47,13 +47,13 @@ class Welcome(QMainWindow):
         self.prev_button = QPushButton(self)
         self.prev_button.setStyleSheet("background-color: #8db600; color: white; font-weight: bold;")
         self.prev_button.setGeometry(250, 520, 40, 30)
-        self.prev_button.setIcon(QIcon('arrow-left.svg'))
+        self.prev_button.setIcon(QIcon('source/arrow-left.svg'))
         self.prev_button.clicked.connect(self.show_previous_image)
 
         self.next_button = QPushButton(self)
         self.next_button.setStyleSheet("background-color: #8db600; color: white; font-weight: bold;")
         self.next_button.setGeometry(510, 520, 40, 30)
-        self.next_button.setIcon(QIcon('arrow-rigth.svg'))
+        self.next_button.setIcon(QIcon('source/arrow-rigth.svg'))
         self.next_button.clicked.connect(self.show_next_image)
 
         self.mainButton = StyledButton("Hacer una reserva!", self)
