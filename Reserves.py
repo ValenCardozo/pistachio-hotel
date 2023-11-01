@@ -29,6 +29,11 @@ class Reserves(QMainWindow):
 
             layout.addWidget(headerWidget)
 
+            quitButton = QPushButton('Volver a menú')
+            headerLayout.addWidget(quitButton)
+
+            quitButton.clicked.connect(self.closeWindow)
+
             grid_layout = QGridLayout()
 
             email_label = QLabel("Correo Electrónico:")
@@ -56,6 +61,9 @@ class Reserves(QMainWindow):
             self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
             layout.addWidget(self.table)
+
+    def closeWindow(self):
+        self.close()
 
     def addReserveModal(self):
         self.dialog = QDialog(self)
@@ -122,7 +130,6 @@ class Reserves(QMainWindow):
 
     def changeRoomAmount(self):
         roomName = self.roomIdLineEdit.currentText()
-        # amountsPerDay = [100,200,500]
 
         date_entry = self.dateEntryLineEdit.date()
         date_out = self.dateOutLineEdit.date()
