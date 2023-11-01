@@ -2,7 +2,8 @@ from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 from database import *
-from datetime import date
+from datetime import *
+from CustomWidgets import *
 
 class Reserves(QMainWindow):
     def __init__(self):
@@ -18,10 +19,15 @@ class Reserves(QMainWindow):
             layout = QVBoxLayout()
             central_widget.setLayout(layout)
 
-            # Encabezado personalizado en la esquina superior izquierda
-            header_label = QLabel("Hotel Pistacho - Mis Reservas")
-            header_label.setStyleSheet("background-color: lightgreen; font-size: 16px; padding: 10px; padding: 10px;")
-            layout.addWidget(header_label, alignment=Qt.AlignTop | Qt.AlignLeft)
+            headerWidget = StyledWidget()
+            headerLayout = QHBoxLayout()
+            headerWidget.setLayout(headerLayout)
+
+            titleLabel = StyledLabel("Mis Reservas")
+            headerLayout.addWidget(titleLabel)
+            headerLayout.addStretch(1)
+
+            layout.addWidget(headerWidget)
 
             grid_layout = QGridLayout()
 
@@ -72,8 +78,30 @@ class Reserves(QMainWindow):
 
         self.roomIdLineEdit = QComboBox(self)
         self.amountLineEdit = QLineEdit()
+
+        date_start = self.dateEntryLineEdit.date()
+        date_end = self.dateOutLineEdit.date()
+
+        start_date = datetime(date_start.year(), date_start.month(), date_start.day(), 0, 0, 0).strftime('%Y-%m-%d %H:%M:%S')
+        end_date = datetime(date_end.year(), date_end.month(), date_end.day(), 23, 59, 59).strftime('%Y-%m-%d %H:%M:%S')
+        availableRooms = searchAvailableRooms(start_date, end_date)
+
+        self.roomDataList = {}
+        roomNamesToShow = []
+        for room in availableRooms:
+            if room[1] not in roomNamesToShow:
+                roomNamesToShow.append(room[1])
+
+            roomData = {
+                'id': room[0],
+                'roomName': room[1],
+                'capacity': room[2],
+                'price': room[3],
+            }
+            self.roomDataList[room[1]] = roomData
+
         self.roomIdLineEdit.currentIndexChanged.connect(self.changeRoomAmount)
-        self.roomIdLineEdit.addItems(['comfort','suite','presidential']) #Editar
+        self.roomIdLineEdit.addItems(roomNamesToShow)
 
         formLayout.addRow("Nombre del Cliente:", self.customerFullNameLineEdit)
         formLayout.addRow("Email del Cliente:", self.customerEmailLineEdit)
@@ -93,15 +121,15 @@ class Reserves(QMainWindow):
         self.dialog.exec()
 
     def changeRoomAmount(self):
-        roomId = self.roomIdLineEdit.currentIndex()
-        amountsPerDay = [100,200,500]
+        roomName = self.roomIdLineEdit.currentText()
+        # amountsPerDay = [100,200,500]
 
         date_entry = self.dateEntryLineEdit.date()
         date_out = self.dateOutLineEdit.date()
 
         difference = date_entry.daysTo(date_out)
 
-        self.amountLineEdit.setText(str(amountsPerDay[roomId] * difference))
+        self.amountLineEdit.setText(str(self.roomDataList[roomName]['price'] * difference))
 
     def insertReserve(self):
         form_data = {
@@ -109,7 +137,7 @@ class Reserves(QMainWindow):
             'customer_email': self.customerEmailLineEdit.text(),
             'date_entry': self.dateEntryLineEdit.text(),
             'date_out': self.dateOutLineEdit.text(),
-            'room_id': self.roomIdLineEdit.text(),
+            'room_id': self.roomDataList[self.roomIdLineEdit.currentText()]['id'],
             'amount': self.amountLineEdit.text(),
         }
 
