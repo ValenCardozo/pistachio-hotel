@@ -1,4 +1,3 @@
-import sys
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -9,7 +8,6 @@ from CustomWidgets import StyledWidget, StyledLabel
 class Admin(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowState(Qt.WindowMaximized)
         self.initUI()
         self.adjust_input_group_width()
         self.setStyleSheet("background-color: #ffffff; color: #000000;")
@@ -20,24 +18,26 @@ class Admin(QMainWindow):
         self.create_layouts()
         self.connect_signals()
         self.populate_rooms()
+        self.setMinimumSize(800, 600)
 
     def create_header_widget(self):
         self.headerWidget = StyledWidget()
         self.headerWidget.setStyleSheet("background-color: #8db600; color: white; font-weight: bold;")
-        self.headerWidget.setFixedHeight(90)
+        self.headerWidget.setFixedHeight(45)
 
         header_layout = QHBoxLayout(self.headerWidget)
         header_layout.setContentsMargins(0, 0, 0, 0)
-        header_layout.setSpacing(1)
 
         title_label = StyledLabel("Hotel Pistacho Administración")
         title_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        title_label.setContentsMargins(10, 0, 0, 0)
         header_layout.addWidget(title_label)
 
     def create_input_widgets(self):
         self.input_group = QGroupBox("Detalles de la habitación")
-        self.input_group.setStyleSheet("border: 1px solid #d3d3d3; margin-top: 0.5em;")
+        self.input_group.setStyleSheet("border: 1px solid #d3d3d3;")
         self.input_group.setFixedHeight(400)
+        self.input_group.setContentsMargins(5, 0, 0, 50)
         input_layout = QVBoxLayout(self.input_group)
 
         cant_personas_label = QLabel("Cantidad de personas:", self)
@@ -76,7 +76,6 @@ class Admin(QMainWindow):
 
         main_layout = QVBoxLayout(central_widget)
         main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
 
         left_layout = QVBoxLayout()
         right_layout = QVBoxLayout()
@@ -93,7 +92,7 @@ class Admin(QMainWindow):
         h_layout.addStretch(1)
         h_layout.addLayout(right_layout)
 
-        main_layout.addStretch(1)
+        main_layout.addStretch(0)
         main_layout.addLayout(h_layout)
 
     def connect_signals(self):
@@ -133,21 +132,21 @@ class Admin(QMainWindow):
         room_frame_layout = QVBoxLayout(room_frame)
         room_frame.setMaximumHeight(50)
         room_frame.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        room_frame.setStyleSheet("border: 1px solid black;")
+        room_frame.setStyleSheet("border: 1px solid #d3d3d3;")
 
         item_layout = QHBoxLayout()
         item_label = QLabel(f" {description} - {cantPersons} personas - ${price}")
+        item_label.setFixedWidth(250)
 
         self.update_button = QPushButton("Actualizar")
         self.update_button.setFixedWidth(75)
         self.update_button.setStyleSheet("background-color: #99dee6; color: #ffffff;")
         self.update_button.clicked.connect(lambda x=False, rid=room_id, desc=description, pers=cantPersons, pr=price: self.show_update_dialog(rid, desc, pers, pr))
 
-
         delete_button = QPushButton("Borrar")
         delete_button.setFixedWidth(75)
         delete_button.setStyleSheet("background-color: #ff0125; color: #ffffff;")
-        delete_button.clicked.connect(lambda x=False, desc=description, pers=cantPersons, pr=price: eself.delete_room(desc, pers, pr))
+        delete_button.clicked.connect(lambda x=False, desc=description, pers=cantPersons, pr=price: self.delete_room(desc, pers, pr))
 
         item_layout.addWidget(item_label)
         item_layout.addWidget(self.update_button)
@@ -188,10 +187,10 @@ class Admin(QMainWindow):
         self.populate_rooms()
 
 def main():
-    app = QApplication(sys.argv)
+    app = QApplication()
     some_app = Admin()
     some_app.show()
-    sys.exit(app.exec())
+    app.exec()
 
 if __name__ == "__main__":
     main()
