@@ -10,7 +10,6 @@ class Admin(QMainWindow):
         super().__init__()
         self.initUI()
         self.adjust_input_group_width()
-        self.setStyleSheet("background-color: #ffffff; color: #000000;")
 
     def initUI(self):
         self.create_header_widget()
@@ -35,26 +34,22 @@ class Admin(QMainWindow):
 
     def create_input_widgets(self):
         self.input_group = QGroupBox("Detalles de la habitación")
-        self.input_group.setStyleSheet("border: 1px solid #d3d3d3;")
         self.input_group.setFixedHeight(400)
-        self.input_group.setContentsMargins(5, 0, 0, 50)
+        self.input_group.setContentsMargins(5, 15, 5, 50)
         input_layout = QVBoxLayout(self.input_group)
 
         cant_personas_label = QLabel("Cantidad de personas:", self)
         cant_personas_label.setFixedHeight(30)
-        cant_personas_label.setStyleSheet("background-color: #eeeeee; color: #000000;")
         self.cant_personas_input = QLineEdit(self)
         self.cant_personas_input.setFixedHeight(25)
 
         description_label = QLabel("Descripción:", self)
         description_label.setFixedHeight(30)
-        description_label.setStyleSheet("background-color: #eeeeee; color: #000000;")
         self.description_input = QLineEdit(self)
         self.description_input.setFixedHeight(25)
 
         price_label = QLabel("Costo p/noche:", self)
         price_label.setFixedHeight(30)
-        price_label.setStyleSheet("background-color: #eeeeee; color: #000000;")
         self.price_input = QLineEdit(self)
         self.price_input.setFixedHeight(25)
 
@@ -97,6 +92,8 @@ class Admin(QMainWindow):
 
     def connect_signals(self):
         self.create_button.clicked.connect(self.add_room)
+        self.cant_personas_input.textChanged.connect(self.validate_capacity_input)
+        self.price_input.textChanged.connect(self.validate_price_input)
 
     def populate_rooms(self):
         for i in reversed(range(self.rooms_layout.count())):
@@ -132,7 +129,6 @@ class Admin(QMainWindow):
         room_frame_layout = QVBoxLayout(room_frame)
         room_frame.setMaximumHeight(50)
         room_frame.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        room_frame.setStyleSheet("border: 1px solid #d3d3d3;")
 
         item_layout = QHBoxLayout()
         item_label = QLabel(f" {description} - {cantPersons} personas - ${price}")
@@ -164,10 +160,19 @@ class Admin(QMainWindow):
 
     def add_room(self):
         description = self.description_input.text()
-        capacity = int(self.cant_personas_input.text())
-        price = int(self.price_input.text())
-        insertRoom(description, capacity, price)
+        capacity = self.cant_personas_input.text()
+        price = self.price_input.text()
+
+        if not description or not capacity or not price:
+            self.show_alert("Error", "Por favor, complete todos los campos.")
+            return
+
+        insertRoom(description, int(capacity), int(price))
         self.populate_rooms()
+
+        self.description_input.clear()
+        self.cant_personas_input.clear()
+        self.price_input.clear()
 
     def delete_room(self, description, cantPersons, price):
         deleteRoom(description, cantPersons, price)
@@ -185,6 +190,24 @@ class Admin(QMainWindow):
     def update_room(self, room_id, description, capacity, price):
         updateRoomById(room_id, description, capacity, price)
         self.populate_rooms()
+
+    def validate_capacity_input(self, text):
+        if not text.isdigit() and text:
+            self.show_alert("Error", "¡Solo numeritos!")
+            self.cant_personas_input.clear()
+
+    def validate_price_input(self, text):
+        if not text.isdigit() and text:
+            self.show_alert("Error", "¡Solo numeritos!")
+            self.price_input.clear()
+
+    def show_alert(self, title, message):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+        msg.setWindowTitle(title)
+        msg.setText(message)
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec()
 
 def main():
     app = QApplication()
