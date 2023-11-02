@@ -1,4 +1,3 @@
-import sys
 from datetime import datetime
 from PySide6.QtGui import *
 from PySide6.QtCore import *
@@ -133,10 +132,10 @@ class Home(QMainWindow):
         self.updateReservesTable(rooms)
 
 def main():
-    app = QApplication(sys.argv)
+    app = QApplication()
     some_app = Home()
     some_app.show()
-    sys.exit(app.exec())
+    app.exec()
 
 if __name__ == "__main__":
     main()

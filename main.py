@@ -1,4 +1,3 @@
-import sys
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -84,10 +83,10 @@ class Welcome(QMainWindow):
         self.close()
 
 def main():
-    app = QApplication(sys.argv)
+    app = QApplication()
     some_app = Welcome()
     some_app.show()
-    sys.exit(app.exec())
+    app.exec()
 
 if __name__ == "__main__":
     main()

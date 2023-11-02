@@ -31,10 +31,10 @@ def customizeExistingClasses():
 if __name__ == "__main__":
     import sys
 
-    app = QApplication(sys.argv)
+    app = QApplication()
     styled_widget = StyledWidget()
     styled_button = StyledButton("Haz clic")
     layout = QVBoxLayout(styled_widget)
     layout.addWidget(styled_button)
     styled_widget.show()
-    sys.exit(app.exec_())
+    app.exec_()

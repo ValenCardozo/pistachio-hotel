@@ -1,12 +1,9 @@
 # Link de documentacion para el uso en terminal: https://www.sqlitetutorial.net/sqlite-commands/
-# Step 1: Import the SQLite library
 import sqlite3
 
 def initDatabase():
-    # Step 2: Connect to the database (or create a new one if it doesn't exist)
     conn = sqlite3.connect('hotel.db')
 
-    # Step 3: Create a cursor object to interact with the database
     cursor = conn.cursor()
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS rooms
@@ -73,9 +70,6 @@ def deleteRoom(description, capacity, night_price):
     conn.commit()
     conn.close()
 
-# Step 5: Insert a new employee into the 'employees' table
-# cursor.execute("INSERT INTO employees (name, position, salary) VALUES (?, ?, ?)", ('John Doe', 'Software Engineer', 80000))
-# conn.commit()
 def getAllReservesForMail(email):
     conn = sqlite3.connect('hotel.db')
     conn.row_factory = sqlite3.Row
