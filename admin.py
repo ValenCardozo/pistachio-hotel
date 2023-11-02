@@ -2,10 +2,10 @@ from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 from database import getAllRooms, deleteRoom, insertRoom, updateRoomById
-from UpdateRoom import *
-from CustomWidgets import StyledWidget, StyledLabel
+from updateRoom import *
+from customWidgets import styledWidget, styledLabel
 
-class Admin(QMainWindow):
+class admin(QMainWindow):
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -20,14 +20,14 @@ class Admin(QMainWindow):
         self.setMinimumSize(800, 600)
 
     def create_header_widget(self):
-        self.headerWidget = StyledWidget()
+        self.headerWidget = styledWidget()
         self.headerWidget.setStyleSheet("background-color: #8db600; color: white; font-weight: bold;")
         self.headerWidget.setFixedHeight(45)
 
         header_layout = QHBoxLayout(self.headerWidget)
         header_layout.setContentsMargins(0, 0, 0, 0)
 
-        title_label = StyledLabel("Hotel Pistacho Administración")
+        title_label = styledLabel("Hotel Pistacho Administración")
         title_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         title_label.setContentsMargins(10, 0, 0, 0)
         header_layout.addWidget(title_label)
@@ -179,7 +179,7 @@ class Admin(QMainWindow):
         self.populate_rooms()
 
     def show_update_dialog(self, room_id, description, capacity, price):
-        dialog = UpdateRoomDialog(room_id, description, capacity, price, self)
+        dialog = updateRoomDialog(room_id, description, capacity, price, self)
 
         if dialog.exec():
             updated_description = dialog.get_description()
@@ -211,7 +211,7 @@ class Admin(QMainWindow):
 
 def main():
     app = QApplication()
-    some_app = Admin()
+    some_app = admin()
     some_app.show()
     app.exec()
 

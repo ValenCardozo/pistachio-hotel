@@ -3,11 +3,11 @@ from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 from database import *
-from admin import Admin
-from Reserves import Reserves
-from CustomWidgets import * 
+from admin import admin
+from reserves import reserves
+from customWidgets import * 
 
-class Home(QMainWindow):
+class home(QMainWindow):
     def __init__(self):
         super().__init__()
         initDatabase()
@@ -17,11 +17,11 @@ class Home(QMainWindow):
         self.setWindowTitle("Hotel Pistachio")
         self.layout = QVBoxLayout()
 
-        headerWidget = StyledWidget()
+        headerWidget = styledWidget()
         headerLayout = QHBoxLayout()
         headerWidget.setLayout(headerLayout)
         
-        titleLabel = StyledLabel("Hotel Pistachio")
+        titleLabel = styledLabel("Hotel Pistachio")
         headerLayout.addWidget(titleLabel)
         headerLayout.addStretch(1)
 
@@ -56,7 +56,7 @@ class Home(QMainWindow):
 
         if ok:
             if password == hardcoded_password:
-                self.admin = Admin()
+                self.admin = admin()
                 self.admin.show()
             else:
                 QMessageBox.critical(self, 'Error', 'Contraseña incorrecta.')
@@ -68,17 +68,17 @@ class Home(QMainWindow):
         adminButton.clicked.connect(self.openReserves)
 
     def openReserves(self):
-        self.reserves = Reserves()
+        self.reserves = reserves()
         self.reserves.show()
 
     def setCreateReserveButton(self):
-        createReserve = StyledButton('Reservar')
+        createReserve = styledButton('Reservar')
         createReserve.clicked.connect(self.createReserve)
         
         return createReserve
 
     def createReserve(self):
-        self.addModal = Reserves()
+        self.addModal = reserves()
         self.addModal.addReserveModal()
 
     def loadFilter(self):
@@ -133,7 +133,7 @@ class Home(QMainWindow):
 
 def main():
     app = QApplication()
-    some_app = Home()
+    some_app = home()
     some_app.show()
     app.exec()
 

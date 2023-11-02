@@ -1,10 +1,10 @@
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
-from UpdateRoom import *
+from updateRoom import *
 from PySide6.QtGui import QPixmap
 from home import *
-from CustomWidgets import *
+from customWidgets import *
 
 class Welcome(QMainWindow):
     def __init__(self):
@@ -55,7 +55,7 @@ class Welcome(QMainWindow):
         self.next_button.setIcon(QIcon('source/arrow-rigth.svg'))
         self.next_button.clicked.connect(self.show_next_image)
 
-        self.mainButton = StyledButton("Hacer una reserva!", self)
+        self.mainButton = styledButton("Hacer una reserva!", self)
         self.mainButton.clicked.connect(self.openMain)
         self.mainButton.setGeometry(325, 550, 150, 30)
 
@@ -78,7 +78,7 @@ class Welcome(QMainWindow):
         self.load_image()
 
     def openMain(self):
-        self.main = Home()
+        self.main = home()
         self.main.show()
         self.close()
 

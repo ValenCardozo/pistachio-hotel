@@ -2,22 +2,22 @@ from PySide6.QtGui import QPalette, QColor
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QVBoxLayout, QPushButton, QWidget, QLabel
 
-class StyledButton(QPushButton):
+class styledButton(QPushButton):
     def __init__(self, text, parent=None):
-        super(StyledButton, self).__init__(text, parent)
+        super(styledButton, self).__init__(text, parent)
         self.setStyleSheet("background-color: #8db600; color: white; font-weight: bold;")
 
-class StyledWidget(QWidget):
+class styledWidget(QWidget):
     def __init__(self):
-        super(StyledWidget, self).__init__()
+        super(styledWidget, self).__init__()
         palette = QPalette()
         palette.setColor(QPalette.Window, QColor(141, 182, 0))  # Pistacho
         self.setPalette(palette)
         self.setAutoFillBackground(True)
 
-class StyledLabel(QLabel):
+class styledLabel(QLabel):
     def __init__(self, text, parent=None):
-        super(StyledLabel, self).__init__(text, parent)
+        super(styledLabel, self).__init__(text, parent)
         self.setStyleSheet("color: white; font-weight: bold; font-size: 16px;")
 
 # Personalización de clases existentes
@@ -29,11 +29,9 @@ def customizeExistingClasses():
     QPushButton.setStyleSheet("background-color: #8db600; color: white; font-weight: bold;")
 
 if __name__ == "__main__":
-    import sys
-
     app = QApplication()
-    styled_widget = StyledWidget()
-    styled_button = StyledButton("Haz clic")
+    styled_widget = styledWidget()
+    styled_button = styledButton("Haz clic")
     layout = QVBoxLayout(styled_widget)
     layout.addWidget(styled_button)
     styled_widget.show()

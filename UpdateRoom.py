@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton
 from database import updateRoomById
 
-class UpdateRoomDialog(QDialog):
+class updateRoomDialog(QDialog):
     def __init__(self, room_id, description, capacity, price, parent=None):
         super().__init__(parent)
         self.room_id = room_id

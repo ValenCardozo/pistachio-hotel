@@ -3,9 +3,9 @@ from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 from database import *
 from datetime import *
-from CustomWidgets import *
+from customWidgets import *
 
-class Reserves(QMainWindow):
+class reserves(QMainWindow):
     def __init__(self):
             super().__init__()
             self.setWindowState(Qt.WindowMaximized)
@@ -19,11 +19,11 @@ class Reserves(QMainWindow):
             layout = QVBoxLayout()
             central_widget.setLayout(layout)
 
-            headerWidget = StyledWidget()
+            headerWidget = styledWidget()
             headerLayout = QHBoxLayout()
             headerWidget.setLayout(headerLayout)
 
-            titleLabel = StyledLabel("Mis Reservas")
+            titleLabel = styledLabel("Mis Reservas")
             headerLayout.addWidget(titleLabel)
             headerLayout.addStretch(1)
 
@@ -139,6 +139,11 @@ class Reserves(QMainWindow):
         self.amountLineEdit.setText(str(self.roomDataList[roomName]['price'] * difference))
 
     def insertReserve(self):
+
+        if self.customerEmailLineEdit.text() == '' or self.customerFullNameLineEdit.text() == '':
+            self.showAlert("Por favor revise nombre y correo")
+            return
+
         form_data = {
             'customer_full_name': self.customerFullNameLineEdit.text(),
             'customer_email': self.customerEmailLineEdit.text(),
@@ -229,7 +234,7 @@ class Reserves(QMainWindow):
 
 def main():
     app = QApplication()
-    window = Reserves()
+    window = reserves()
     window.show()
     app.exec()
 
