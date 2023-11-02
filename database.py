@@ -135,7 +135,7 @@ def insertDummyreservations():
     conn = sqlite3.connect('hotel.db')
     cursor = conn.cursor()
 
-    cursor.execute("INSERT INTO reserves (customer_full_name, customer_email, date_entry, date_out, room_id, amount) VALUES ('Cliente 1', 'cliente1@correo.com', '2023-11-05 11:00:00', '2023-10-25 12:00:00', 1, 200), ('Cliente 2', 'cliente2@correo.com', '2023-11-05 11:00:00', '2023-10-26 13:00:00', 2, 250), ('Cliente 3', 'cliente3@correo.com', '2023-11-05 11:00:00', '2023-10-27 14:00:00', 3, 300);")
+    cursor.execute("INSERT INTO reserves (customer_full_name, customer_email, date_entry, date_out, room_id, amount) VALUES ('Cliente 1', 'cliente1@correo.com', '2023-11-05 11:00:00', '2023-11-25 12:00:00', 1, 3000),('Cliente 1', 'cliente1@correo.com', '2023-10-05 11:00:00', '2023-10-25 12:00:00', 1, 3000), ('Cliente 1', 'cliente1@correo.com', '2023-09-05 11:00:00', '2023-09-25 12:00:00', 2, 4000), ('Cliente 2', 'cliente2@correo.com', '2023-11-05 11:00:00', '2023-11-26 13:00:00', 2, 250), ('Cliente 3', 'cliente3@correo.com', '2023-11-15 11:00:00', '2023-11-27 14:00:00', 3, 300);")
 
     conn.commit()
     conn.close()
